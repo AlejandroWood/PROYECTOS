@@ -2,19 +2,24 @@ package com.daw.utils;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+//import java.sql.ResultSet;
+//import java.sql.Statement;
 
 import io.github.cdimascio.dotenv.Dotenv;
 
 public class Db {
 
+    // Constantes de la BD
     public static final int ORDEN_ASC = 0;
     public static final int ORDEN_DESC = 1;
-    public static final int CLASIF_MENORES = 0;
+
+    public static final int CLASIF_MENORES = 1;
+    public static final int CLASIF_MAYORES = 2;
 
     public static Connection conectar() {
-
+        // Al crear el dotenv cargamos todas las variables
         Dotenv dotenv = Dotenv.load();
-        
+
         // Asigno las variables desde el fichero .env
         String host = dotenv.get("DB_HOST");
         String port = dotenv.get("DB_PORT");

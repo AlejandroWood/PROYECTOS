@@ -1,9 +1,11 @@
 package com.daw.panels;
-import java.sql.SQLException;
 
-import com.daw.model.DirectorDAO;
+//import java.sql.SQLException;
+
+import com.daw.model.PeliculasDAO;
 
 import javafx.geometry.Insets;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -13,7 +15,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 
 public class PeliculaPanel extends GridPane {
-    
+
+    // VARIABLES MIEMBRO DEL GRIDPANE
     private Label lblTitulo;
     private Label lblClasificacion;
     private Label lblDuracion;
@@ -25,30 +28,34 @@ public class PeliculaPanel extends GridPane {
     public TextArea txtSinopsis;
     public Button btnReset;
     public Button btnGuardar;
-        
+
     public PeliculaPanel() {
 
-        lblTitulo = new Label("Título:");
-        lblClasificacion = new Label("Clasificación:");
-        lblDuracion = new Label("Duración:");
-        lblSinopsis = new Label("Sinopsis:");
-
-        txtTitulo = new TextField("Escribe un Título...");
+        // Creamos los controles
+        lblTitulo = new Label("Título");
+        lblClasificacion = new Label("Clasificaciín");
+        lblDuracion = new Label("Duración");
+        lblSinopsis = new Label("Sinopsís");
+        txtTitulo = new TextField("Escribe un Título..");
         cmbClasificacion = new ComboBox<String>();
-        sldDuracion = new Slider(30,600,120);
-        txtSinopsis = new TextArea("Escribe una descripción...");
-        btnReset = new Button("Borrar");
+        sldDuracion = new Slider(30, 600, 120);
+        txtSinopsis = new TextArea("Escribe una descripcion");
+        btnReset = new Button("Limpiar");
         btnGuardar = new Button("Guardar");
 
-        this.setHgap(10);
-        this.setVgap(8);
+        // Organizamos los espacios
+        this.setHgap(10); // separacion horizontal entre columnas
+        this.setVgap(8); // separacion vertical entre filas
         this.setPadding(new Insets(20));
-        
-        cmbClasificacion.getItems().addAll("Todos los Públicos","+3","+6","+9","+12","+14","+18","Jubilados Only");
+
+        // Añadimos datos al comboBox
+        cmbClasificacion.getItems().addAll("Todos los Públicos", "+3", "+6", "+9", "+12", "+14", "+18",
+                "Jubilados Only");
+
         txtSinopsis.setPrefWidth(500);
         txtSinopsis.setPrefHeight(300);
 
-        //Añadimos al gridPane todos los elementos
+        // Añadimos al gridPane los elementos
         this.add(lblTitulo, 0, 0);
         this.add(txtTitulo, 1, 0);
         this.add(lblClasificacion, 0, 1);
@@ -60,24 +67,57 @@ public class PeliculaPanel extends GridPane {
         this.add(btnGuardar, 0, 6);
         this.add(btnReset, 1, 6);
 
-        btnReset.setOnAction( e -> {
+        // Cuando pulsamos sobre el boton reset llamamos a
+        // La funcion reset
+        btnReset.setOnAction(e -> {
             reset();
+        });
+
+        btnGuardar.setOnAction(e -> {
+            int resultado = guardar();
+
+            if (resultado == -1) {
+                Alert error = new Alert(Alert.AlertType.ERROR);
+                error.setTitle("Error");
+                error.setHeaderText("No se pudo conectar a la base de datos");
+                error.setContentText("Comprueba que el servidor esta activo e intentalo de nuevo.");
+                error.showAndWait();
+            } else {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Operacion completada");
+                alert.setHeaderText(null);
+                alert.setContentText("El registro se ha guardado correctamente");
+                alert.showAndWait();
+            }
         });
 
     }
 
+    /**
+     * Resetea el formulario
+     */
     private void reset() {
         this.txtTitulo.clear();
+        // Para seleccionar un elemento usamos selectionModel
         this.cmbClasificacion.getSelectionModel().selectFirst();
         sldDuracion.setValue(120);
         txtSinopsis.clear();
     }
 
+    /**
+     * 
+     * @return
+     */
     private int guardar() {
-        try (DirectorDAO directorDAO = new DirectorDAO()){
-            directorDAO.crearDirector(txtTitulo.getText(), txtSinopsis.getText(), sldDuracion);
+        int resultado = -1;
+        try (PeliculasDAO peliculasDAO = new PeliculasDAO()) {
+            resultado = peliculasDAO.crearPelicula(txtTitulo.getText(),
+                    cmbClasificacion.getSelectionModel().getSelectedIndex(), (int) sldDuracion.getValue(),
+                    txtSinopsis.getText());
         } catch (Exception e) {
-            
+            // Mostramos una ventana de error con el mensaje
         }
+        return resultado;
     }
+
 }
