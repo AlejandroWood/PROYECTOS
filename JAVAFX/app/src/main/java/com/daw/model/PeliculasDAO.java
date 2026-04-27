@@ -214,7 +214,6 @@ public class PeliculasDAO implements AutoCloseable {
 
     @Override
     public void close() throws Exception {
-        // TODO Auto-generated method stub
         this.con.close();
     }
 
