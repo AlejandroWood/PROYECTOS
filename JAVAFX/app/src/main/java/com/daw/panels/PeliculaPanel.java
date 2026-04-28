@@ -78,15 +78,15 @@ public class PeliculaPanel extends GridPane {
 
             if (resultado == -1) {
                 Alert error = new Alert(Alert.AlertType.ERROR);
-                error.setTitle("Error");
-                error.setHeaderText("No se pudo conectar a la base de datos");
-                error.setContentText("Comprueba que el servidor esta activo e intentalo de nuevo.");
+                error.setTitle("Error En la Operacion");
+                error.setHeaderText(null);
+                error.setContentText("El registro no se ha guardado correctamente.");
                 error.showAndWait();
             } else {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Operacion completada");
                 alert.setHeaderText(null);
-                alert.setContentText("El registro se ha guardado correctamente");
+                alert.setContentText("La pelicula se ha guardado correctamente.");
                 alert.showAndWait();
             }
         });
